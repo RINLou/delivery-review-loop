@@ -1,0 +1,7 @@
+# editor
+.DS_Store
+*.swp
+*~
+
+# OS
+Thumbs.db
