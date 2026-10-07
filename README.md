@@ -26,6 +26,13 @@ cp SKILL.md ~/.workbuddy/skills/delivery-review-loop/
 
 重启 / 新建一次 WorkBuddy 会话后，技能即对所有实质性工作默认生效。
 
+> 也可整仓库克隆（便于日后随仓库同步 README / 后续更新）：
+> ```bash
+> git clone https://github.com/RINLou/delivery-review-loop.git ~/.workbuddy/skills/delivery-review-loop
+> ```
+>
+> 术语说明：本文「轻量版」即技能文件内「免契约的碎活」，二者同义。
+
 ## 架构诚实声明（重要）
 
 本机制**没有系统级强制钩子**（无 pre-commit / CI gate / 交付前硬卡口）。它依赖：
