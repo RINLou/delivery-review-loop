@@ -31,7 +31,7 @@ On delivery, you **must** attach verifiable evidence. "I think it's done" is for
 
 ### Layer 3 — Independent review (独立挑刺)
 Before delivering any substantial task, **by default** spawn an independent reviewer (note: not automatic by the system — enforced by this skill). Key: the reviewer **cannot see the main conversation history**; it only gets "contract + deliverables + original requirement", so it's truly independent. Self-reviewing = no review.
-- How to spawn (framework-specific — see "Adapt to your framework" below): e.g. WorkBuddy `Agent` tool in plan mode; Claude Code/Codex subagent; a fresh context with materials pasted in.
+- How to spawn (framework-specific — see "Adapt to your framework" below): e.g. DSH `subagent` (a separate context that cannot see this conversation — **never `subagent_fork`**, it inherits every completed turn and independence drops to zero); WorkBuddy `Agent` tool in plan mode; Claude Code/Codex subagent; a fresh context with materials pasted in.
 - The reviewer returns a structured issue list (fatal / important / minor + fix suggestions).
 - **You fix per the list → re-run the reviewer.** If a fatal item can't be cleared after one fix round (needs human decision / lacks external resource / is a design-level flaw you can't fix), then **stop retrying, disclose the fatal item and why, transparently, and let the human decide deliver-vs-rollback**. Do not fake-clear or loop forever. Only after confirming no fatal do you formally deliver, and attach the reviewer's final conclusion.
 
@@ -85,6 +85,7 @@ Pass / Needs revision (fatal N · important M)
 ## Adapt to your framework
 The three layers are framework-agnostic. Map the mechanisms to your tooling:
 
+- **DeepSeek Harness (DSH)**: drop this skill into the user skill root `~/.agents/skills/delivery-review-loop/SKILL.md` — DSH picks it up live, no restart and no plugin required (the directory is created on first use). Alternatively ship it inside a plugin package as `<pkg>/skills/<name>/SKILL.md`, registered through the host-provided `@deepseek-ai/dsh-skill` service. Independent reviewer = the `subagent` tool (separate context, cannot see this session); **do not use `subagent_fork`** (it inherits all completed turns, so independence drops to zero), and do not use an Agency expert/team as the reviewer because fork providers may inherit context. For cross-session recall, write the loop into the DSH system prompt / persona config.
 - **WorkBuddy**: install to `~/.workbuddy/skills/delivery-review-loop/`; load via the Skill tool. For cross-session enforcement, also add a "工作闭环" section to `SOUL.md` (persona). Independent reviewer = `Agent` tool with `subagent_type=general-purpose`, `mode=plan` (read-only), `max_turns=8`; in the prompt explicitly state the reviewer does not load this skill and spawns no sub-agents.
 - **Claude Code / Codex / Cursor**: use the platform's sub-agent / `/review` / separate-context feature. Paste the contract + deliverable paths into the sub-agent; forbid it from reading the main thread. Write the loop into `CLAUDE.md` / agent config for cross-session recall.
 - **Generic Agents SDK (OpenAI Agents, LangGraph, etc.)**: implement Layer 3 as a separate agent/context with no access to the orchestrator's message history; hand it only the contract + artifact references.

@@ -17,7 +17,7 @@ A **framework-agnostic** 3-layer delivery review loop for any AI / coding agent:
 
 ## Install / adapt
 
-This skill is framework-agnostic. See **SKILL.md → "Adapt to your framework"** for mappings to WorkBuddy, Claude Code / Codex / Cursor, generic Agents SDK, and a no-sub-agent fallback.
+This skill is framework-agnostic. See **SKILL.md → "Adapt to your framework"** for mappings to DSH (DeepSeek Harness), WorkBuddy, Claude Code / Codex / Cursor, generic Agents SDK, and a no-sub-agent fallback.
 
 Quick start (generic):
 Paste `SKILL.md` into your agent's skill / instruction set, and wire Layer 3 to your framework's sub-agent mechanism (see "Adapt to your framework").
