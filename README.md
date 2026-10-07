@@ -38,14 +38,14 @@ DSH picks the skill up live (no restart/plugin needed). Independent reviewer = t
 
 ## Enforcement: from discipline to mechanism
 
-The self-check is "must" by norm. This repo ships three artifacts that make it *mechanical* wherever deliveries are files/PRs:
+The self-check is "must" by norm. This repo ships two enforceable artifacts (plus an optional CI gate) that make it *mechanical* wherever deliveries are files/PRs:
 
 - **`validate_delivery.py`** — parses a delivery markdown and exits non-zero if the mandatory self-check block (contract / evidence / reviewer) is missing. Stdlib-only.
   ```bash
   python3 validate_delivery.py DELIVERY.md          # gate on the 3 required elements
   python3 validate_delivery.py DELIVERY.md --strict # also require an AC evidence matrix
   ```
-- **`.github/workflows/review-gate.yml`** — CI gate: on PR/push to `main`, if `DELIVERY.md` exists at repo root, validates it (strict); blocks merge on a missing self-check. Opt-in (skips if no `DELIVERY.md`).
+- **Optional CI gate** (`.github/workflows/review-gate.yml`, in the working tree but not committed — needs a `workflow`-scoped PAT or GitHub web UI to enable): on PR/push, if `DELIVERY.md` exists at repo root, validates it (strict); blocks merge on a missing self-check. Opt-in.
 - **`hooks/delivery-gate.sh`** — optional git pre-commit hook; blocks commit if a staged `DELIVERY.md` fails validation.
   ```bash
   cp hooks/delivery-gate.sh .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
@@ -55,7 +55,7 @@ For chat-only deliveries (no artifact file) the self-check stays disciplined tex
 
 ## Architecture honesty
 
-There is **no system-level forced hook by default** — skipping the loop raises no alert, it's discipline. The validator + CI/pre-commit hooks above close that gap *where tooling permits* (file/PR deliveries). For pure-chat deliveries the honesty note from SKILL.md still applies.
+There is **no system-level forced hook by default** — skipping the loop raises no alert, it's discipline. The validator + pre-commit hook above close that gap *where tooling permits* (file/PR deliveries); an optional CI gate can be enabled with a `workflow`-scoped PAT or via GitHub web UI. For pure-chat deliveries the honesty note from SKILL.md still applies.
 
 ## Hardening notes (2026-10-07 external review)
 

@@ -13,7 +13,7 @@
 
 set -euo pipefail
 
-if git diff --cached --name-only --diff-filter=A | grep -qx "DELIVERY.md"; then
+if git diff --cached --name-only | grep -qx "DELIVERY.md"; then
   if [ -f DELIVERY.md ]; then
     if ! python3 "$(git rev-parse --show-toplevel)/validate_delivery.py" DELIVERY.md --strict; then
       echo "pre-commit: DELIVERY.md is missing a complete self-check block." >&2

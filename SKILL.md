@@ -7,7 +7,7 @@ description: A framework-agnostic 3-layer delivery review loop (contract -> evid
 
 A portable quality-closing loop **any AI agent can adopt**. Not tied to any product. Core idea (from a "goal + contract + independent review" workflow): before you declare any substantial work done, (1) agree on a written contract, (2) show evidence it's actually done, (3) have an *independent* reviewer — one that cannot see the main conversation — poke holes.
 
-> ⚠️ Architecture honesty: by itself there is **no system-level forced hook** (no pre-commit, no CI gate, no hard pre-delivery block) — skipping the loop raises no alert, it's discipline. **This version ships a mechanism to close that gap** (see "From discipline to mechanism"): `validate_delivery.py` + a CI gate + an optional pre-commit hook make the self-check *mechanical* wherever deliveries are files/PRs. For chat-only deliveries (no artifact file) the self-check stays disciplined text — the mechanism can't parse a chat, so the honesty note still applies there.
+> ⚠️ Architecture honesty: by itself there is **no system-level forced hook** (no pre-commit, no CI gate, no hard pre-delivery block) — skipping the loop raises no alert, it's discipline. **This version ships a mechanism to close that gap** (see "From discipline to mechanism"): `validate_delivery.py` + a pre-commit hook (and an optional CI gate you can enable) make the self-check *mechanical* wherever deliveries are files/PRs. For chat-only deliveries (no artifact file) the self-check stays disciplined text — the mechanism can't parse a chat, so the honesty note still applies there.
 
 ## When to run the loop
 
@@ -67,10 +67,13 @@ To keep the review *independent* and not just *isolated from chat history*:
 
 ## From discipline to mechanism
 
-The self-check is "must" by norm. To make it *mechanical* wherever deliveries are files/PRs, this repo ships:
+The self-check is "must" by norm. To make it *mechanical* wherever deliveries are files/PRs, this repo ships two enforceable artifacts:
 - **`validate_delivery.py`** — parses a delivery artifact (markdown) and exits **non-zero** if the mandatory self-check block (contract / evidence / reviewer) is missing. Run locally or in CI.
-- **`.github/workflows/review-gate.yml`** — CI gate: on PR, if `DELIVERY.md` exists at repo root, validates it; blocks merge on a missing self-check.
 - **`hooks/delivery-gate.sh`** — optional git pre-commit hook; blocks commit if a staged `DELIVERY.md` fails validation.
+
+**Optional CI gate** (not committed here): `.github/workflows/review-gate.yml` is provided in the repo working tree but cannot be pushed with a PAT lacking the `workflow` scope. To enable it, either paste the file into GitHub's web UI (Actions → New workflow) or push with a PAT that has the `workflow` scope. It validates `DELIVERY.md` on PR/push and blocks merge on a missing self-check.
+
+> Note: the validator is **structural only** — it confirms the self-check block exists and contains the three required elements; it cannot verify the contract was truly human-confirmed, the evidence is real, or an independent review actually happened. Pair it with human sign-off for high-risk deliveries.
 
 For chat-only deliveries (no artifact file) the self-check remains disciplined text — the mechanism can't parse a chat. Wire the validator into your pipeline by writing deliveries that matter to a `DELIVERY.md` (or equivalent) so the hook can enforce them.
 
