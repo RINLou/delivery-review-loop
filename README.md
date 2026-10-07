@@ -1,51 +1,34 @@
 # delivery-review-loop
 
-WorkBuddy 用户级技能：**对所有实质性交付强制走三层审查闭环。**
+A **framework-agnostic** 3-layer delivery review loop for any AI / coding agent: **contract → evidence → independent reviewer**. Not tied to any product.
 
-> 由用户（老板）于 2026-10-07 拍板：对 AI 助手以后所有实质性工作强制走三层闭环，纯问答/翻译类走轻量版。
+> Originated from a user request (2026-10-07): apply a "goal + contract + independent review" closing loop to *all* of an agent's substantial work. Later rewritten to be portable across agent frameworks (WorkBuddy, Claude Code, Codex, Cursor, generic Agents SDK, …).
 
-## 三层机制
+## The three layers
 
-1. **合同定标准（契约）** — 复杂任务先出书面契约（目标 / 范围含"不做啥" / 可验证验收标准 / 关键假设），确认再动手。
-2. **证据说话** — 交付必须附可验证证据，禁止"我觉得做完了"。
-3. **独立挑刺** — 交付前默认主动拉一个独立子代理（看不到主对话，只拿契约+产出物）复核找茬，据其清单修正后交付；致命项修不掉则透明披露、由老板拍板。
+1. **Contract (定标准)** — for substantial tasks, write a short contract (goal / scope incl. "won't do" / verifiable acceptance criteria / key assumptions); confirm before acting.
+2. **Evidence (证据说话)** — on delivery, attach verifiable evidence; "I think it's done" is forbidden.
+3. **Independent review (独立挑刺)** — before delivery, by default spawn an independent reviewer that cannot see the main conversation; fix per its list, re-review; disclose any unresolvable fatal and let the human decide.
 
-## 适用场景
+## When to run
 
-- 会产生文件、改代码、跑命令、给外部结论、出数据的**实质性任务** → 走完整三层（含独立子代理复核）。
-- 一句话能搞定的轻量任务（翻译、问答、解释）→ 直接做，跳过第一层契约，第二层做轻量自检，不强制拉子代理。
+- **Substantial**: produces files / changes code / runs commands / gives external conclusions / outputs data → full 3 layers (incl. independent reviewer).
+- **Trivial**: one-liner, unambiguous, no file/command → skip contract, light self-check, no reviewer.
 
-## 安装
+## Install / adapt
 
-把 `SKILL.md` 复制到 WorkBuddy 用户级技能目录：
+This skill is framework-agnostic. See **SKILL.md → "Adapt to your framework"** for mappings to WorkBuddy, Claude Code / Codex / Cursor, generic Agents SDK, and a no-sub-agent fallback.
 
+Quick start (WorkBuddy example):
 ```bash
 mkdir -p ~/.workbuddy/skills/delivery-review-loop
 cp SKILL.md ~/.workbuddy/skills/delivery-review-loop/
 ```
+For cross-session enforcement, also add a "工作闭环" section to your `SOUL.md` (persona file). Other frameworks: paste `SKILL.md` into your agent's skill/instruction set and wire Layer 3 to your sub-agent mechanism.
 
-重启 / 新建一次 WorkBuddy 会话后，技能即对所有实质性工作默认生效。
+## Architecture honesty
 
-> 也可整仓库克隆（便于日后随仓库同步 README / 后续更新）：
-> ```bash
-> git clone https://github.com/RINLou/delivery-review-loop.git ~/.workbuddy/skills/delivery-review-loop
-> ```
->
-> 术语说明：本文「轻量版」即技能文件内「免契约的碎活」，二者同义。
-
-## 架构诚实声明（重要）
-
-本机制**没有系统级强制钩子**（无 pre-commit / CI gate / 交付前硬卡口）。它依赖：
-
-1. `SOUL.md` 中「工作闭环」节的跨会话注入提醒；
-2. 本技能（`delivery-review-loop`）的主动加载；
-3. 每次交付说明里的「闭环自检」勾选项。
-
-漏跑时无系统告警，靠自觉与自检兜底。建议同时把 `SOUL.md` 的「工作闭环」节一并配置（详见 `SKILL.md` 内说明），三者口径一致即可。
-
-## 来源与验证
-
-提出后经过**两轮独立子代理复核**落地：首轮挑出 3 个重要设计缺陷（子代理触发与碎活冲突、无强制钩子、致命死循环），修正后次轮复核通过，并补齐措辞矛盾。
+There is **no system-level forced hook**. Enforcement relies on the loop living in your agent's system prompt + this skill being loaded + a mandatory self-check block in every delivery. Skipping it raises no alert — it's discipline.
 
 ## License
 
