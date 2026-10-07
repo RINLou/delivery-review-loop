@@ -19,12 +19,15 @@ A **framework-agnostic** 3-layer delivery review loop for any AI / coding agent:
 
 This skill is framework-agnostic. See **SKILL.md → "Adapt to your framework"** for mappings to WorkBuddy, Claude Code / Codex / Cursor, generic Agents SDK, and a no-sub-agent fallback.
 
+Quick start (generic):
+Paste `SKILL.md` into your agent's skill / instruction set, and wire Layer 3 to your framework's sub-agent mechanism (see "Adapt to your framework").
+
 Quick start (WorkBuddy example):
 ```bash
 mkdir -p ~/.workbuddy/skills/delivery-review-loop
 cp SKILL.md ~/.workbuddy/skills/delivery-review-loop/
 ```
-For cross-session enforcement, also add a "工作闭环" section to your `SOUL.md` (persona file). Other frameworks: paste `SKILL.md` into your agent's skill/instruction set and wire Layer 3 to your sub-agent mechanism.
+For cross-session enforcement on WorkBuddy, also add a "工作闭环" section to your `SOUL.md` (persona file).
 
 ## Architecture honesty
 
